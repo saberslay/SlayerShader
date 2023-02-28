@@ -15,7 +15,7 @@ public class Slayer : ShaderGUI {
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
-        Slayer.linkButton(70, 20, "Github", "https://github.com/saberslay/SlayShad");
+        Slayer.linkButton(70, 20, "Github", "https://github.com/saberslay/SlayerShader");
         GUILayout.Space(2);
         Slayer.linkButton(70, 20, "Donate", "https://paypal.me/saberslay");
         GUILayout.FlexibleSpace();
