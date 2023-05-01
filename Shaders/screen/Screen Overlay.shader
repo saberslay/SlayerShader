@@ -1,6 +1,5 @@
-Shader "Saberslay shaders/Screen/Overlay Screen"
-{
-	    Properties {
+Shader "Saberslay shaders/Screen/Overlay Screen" {
+	Properties {
       _MainTex ("Texture", Rect) = "white" {}
       _Color ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
       _X ("X", Float) = 0.0
@@ -9,8 +8,10 @@ Shader "Saberslay shaders/Screen/Overlay Screen"
       _Height ("Height", Float) = 128
    }
    SubShader {
-      Tags { "Queue" = "Overlay" } // render after everything else
- 
+      Tags {
+         "Queue" = "Overlay" 
+      }
+      
       Pass {
          Blend SrcAlpha OneMinusSrcAlpha // use alpha blending
          ZTest Always // deactivate depth test
@@ -44,32 +45,31 @@ Shader "Saberslay shaders/Screen/Overlay Screen"
             float4 pos : SV_POSITION;
             float4 tex : TEXCOORD0;
          };
- 
-         vertexOutput vert(vertexInput input) 
-         {
+
+         vertexOutput vert(vertexInput input)  {
             vertexOutput output;
- 
+            
             float2 rasterPosition = float2(
-               _X + _ScreenParams.x / 2.0 
-               + _Width * (input.vertex.x + 0.5),
-               _Y + _ScreenParams.y / 2.0 
-               + _Height * (input.vertex.y + 0.5));
-            output.pos = float4(
+               _X + _ScreenParams.x / 2.0 + _Width * (input.vertex.x + 0.5),
+               _Y + _ScreenParams.y / 2.0 + _Height * (input.vertex.y + 0.5));
+            
+            float4 clipPos = float4(
                2.0 * rasterPosition.x / _ScreenParams.x - 1.0,
-               _ProjectionParams.x * (2.0 * rasterPosition.y / _ScreenParams.y - 1.0),
-               _ProjectionParams.y, // near plane is at -1.0 or at 0.0
-               1.0);
- 
+               2.0 * rasterPosition.y / _ScreenParams.y - 1.0,
+               -_ProjectionParams.y, 1.0);
+            
+            output.pos = UnityObjectToClipPos(input.vertex);
+            output.pos = mul(UNITY_MATRIX_VP, output.pos);
+            
             output.tex = float4(input.vertex.x + 0.5, 
                input.vertex.y + 0.5, 0.0, 0.0);
-               // for a cube, vertex.x and vertex.y 
-               // are -0.5 or 0.5
+
             return output;
          }
- 
-         float4 frag(vertexOutput input) : COLOR
-         {
-            return _Color * tex2D(_MainTex, input.tex.xy);   
+
+
+         float4 frag(vertexOutput input) : COLOR {
+            return _Color * tex2D(_MainTex, input.tex.xy);
          }
  
          ENDCG
